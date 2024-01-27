@@ -6,24 +6,19 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-# Load your dataset (replace 'your_dataset.csv' with your actual dataset)
+
 url = 'Creditcard_data.csv'
 df = pd.read_csv(url)
-
-# Assume 'Class' is the target variable (1 for fraud, 0 for non-fraud)
-# Split the data into features (X) and target variable (y)
 X = df.drop('Class', axis=1)
 y = df['Class']
-
-# Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Resample to balance classes (adjust the sampling strategy as needed)
+
 X_resampled, y_resampled = resample(X_train[y_train == 1], y_train[y_train == 1], replace=True, n_samples=X_train[y_train == 0].shape[0], random_state=42)
 X_balanced = pd.concat([X_train[y_train == 0], X_resampled])
 y_balanced = pd.concat([y_train[y_train == 0], y_resampled])
 
-# Define models
+
 models = {
     'M1': RandomForestClassifier(),
     'M2': LogisticRegression(),
@@ -31,8 +26,6 @@ models = {
     'M4': RandomForestClassifier(),
     'M5': LogisticRegression()
 }
-
-# Define sampling techniques (adjust as needed)
 samplings = {
     'Sampling1': lambda x, y: resample(x, y, n_samples=int(len(x)*0.5), random_state=42),
     'Sampling2': lambda x, y: resample(x, y, n_samples=int(len(x)*0.6), random_state=42),
@@ -40,8 +33,6 @@ samplings = {
     'Sampling4': lambda x, y: resample(x, y, n_samples=int(len(x)*0.8), random_state=42),
     'Sampling5': lambda x, y: resample(x, y, n_samples=int(len(x)*0.9), random_state=42)
 }
-
-# Perform sampling and model training
 results = {}
 for model_name, model in models.items():
     for sampling_name, sampling_func in samplings.items():
@@ -62,7 +53,6 @@ for model_name, model in models.items():
             results[model_name] = {}
         results[model_name][sampling_name] = accuracy
 
-# Print or save the results
 for model_name, sampling_results in results.items():
     print(f"Model: {model_name}")
     for sampling_name, accuracy in sampling_results.items():
